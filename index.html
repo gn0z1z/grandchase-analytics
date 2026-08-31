@@ -1,365 +1,1424 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>DETONADO - GCM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="color-scheme" content="dark">
+
+    <title>GCM_DETONADO.EXE</title>
 
     <style>
-        body {
-            background: #000;
-            color: #00ff00;
-            font-family: "Courier New", monospace;
-            font-size: 14px;
-            margin: 20px;
+
+        /* =========================================================
+           GCM_DETONADO.EXE
+           TERMINAL 80-COLUMN
+           COMPATIBILITY EDITION
+           ========================================================= */
+
+
+        /* =========================================================
+           RESET
+           ========================================================= */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
         }
 
-        a {
-            color: #ffff00;
+
+        html {
+            scroll-behavior: smooth;
+            background: #050505;
         }
+
+
+        body {
+
+            margin: 0;
+
+            min-width: 320px;
+            min-height: 100vh;
+
+            background: #050505;
+
+            color: #cfcfcf;
+
+            font-family:
+                "Courier New",
+                "Lucida Console",
+                monospace;
+
+            font-size: 14px;
+
+            line-height: 1.45;
+        }
+
+
+        /* =========================================================
+           JANELA DO TERMINAL
+
+           Usa quase toda a área disponível sem ultrapassar
+           limites razoáveis em monitores grandes.
+           ========================================================= */
+
+        .terminal-window {
+
+            width: min(1400px, calc(100vw - 32px));
+
+            height: min(94vh, 1000px);
+
+            min-height: 500px;
+
+            margin: 3vh auto;
+
+            border: 1px solid #555;
+
+            background: #080808;
+
+            display: flex;
+
+            flex-direction: column;
+
+            overflow: hidden;
+        }
+
+
+        /* =========================================================
+           TITLE BAR
+           ========================================================= */
+
+        .titlebar {
+
+            flex: 0 0 auto;
+
+            min-height: 38px;
+
+            padding: 0 12px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            border-bottom: 1px solid #444;
+
+            background: #101010;
+
+            color: #ddd;
+
+            user-select: none;
+        }
+
+
+        .titlebar-left {
+
+            min-width: 0;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-weight: bold;
+        }
+
+
+        .titlebar-right {
+
+            flex-shrink: 0;
+
+            color: #777;
+        }
+
+
+        /* =========================================================
+           STATUS BAR
+           ========================================================= */
+
+        .statusbar {
+
+            flex: 0 0 auto;
+
+            min-height: 31px;
+
+            padding: 7px 12px;
+
+            border-bottom: 1px solid #333;
+
+            color: #777;
+
+            font-size: 12px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        .status-ok {
+            color: #aaa;
+        }
+
+
+        /* =========================================================
+           CORPO
+           ========================================================= */
+
+        .terminal-body {
+
+            flex: 1 1 auto;
+
+            min-height: 0;
+
+            display: flex;
+
+            overflow: hidden;
+        }
+
+
+        /* =========================================================
+           MENU
+           ========================================================= */
+
+        .menu {
+
+            width: 230px;
+
+            flex: 0 0 230px;
+
+            min-height: 0;
+
+            padding: 15px 12px;
+
+            border-right: 1px solid #333;
+
+            background: #070707;
+
+            overflow-x: hidden;
+
+            overflow-y: auto;
+
+            scrollbar-width: thin;
+
+            scrollbar-color: #444 #070707;
+        }
+
+
+        .menu-title {
+
+            margin: 0 0 15px;
+
+            color: #ddd;
+
+            white-space: pre;
+
+            overflow: hidden;
+        }
+
+
+        .menu a {
+
+            display: block;
+
+            padding: 3px 4px;
+
+            color: #999;
+
+            text-decoration: none;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        .menu a::before {
+
+            content: "> ";
+
+            color: #555;
+        }
+
+
+        .menu a:hover {
+
+            color: #fff;
+
+            background: #151515;
+        }
+
+
+        .menu a:hover::before {
+            color: #aaa;
+        }
+
+
+        .menu a:focus-visible {
+
+            outline: 1px solid #777;
+
+            outline-offset: -1px;
+
+            color: #fff;
+
+            background: #151515;
+        }
+
+
+        /* =========================================================
+           ÁREA DE CONTEÚDO
+           ========================================================= */
+
+        .terminal {
+
+            flex: 1 1 auto;
+
+            min-width: 0;
+
+            min-height: 0;
+
+            overflow-y: auto;
+
+            overflow-x: hidden;
+
+            padding: 25px 30px 80px;
+
+            scrollbar-width: thin;
+
+            scrollbar-color: #444 #080808;
+        }
+
+
+        /* =========================================================
+           GRADE TERMINAL
+
+           80 colunas continuam sendo a referência visual.
+
+           Em monitores maiores, a grade permanece centralizada.
+
+           Em monitores menores, ela mantém sua largura e o
+           contêiner cria scroll horizontal quando necessário.
+           ========================================================= */
+
+        .terminal-scroll {
+
+            width: 100%;
+
+            min-width: 0;
+
+            overflow-x: auto;
+
+            overflow-y: visible;
+
+            scrollbar-width: thin;
+
+            scrollbar-color: #444 #080808;
+        }
+
+
+        .terminal-grid {
+
+            /*
+             * 80ch é mantido para preservar o desenho ASCII.
+             *
+             * O min-width impede que o conteúdo seja comprimido.
+             *
+             * O width permite que navegadores com fontes diferentes
+             * mantenham aproximadamente a mesma proporção.
+             */
+
+            width: 80ch;
+
+            min-width: 80ch;
+
+            max-width: none;
+
+            margin: 0 auto;
+
+            padding: 0;
+        }
+
+
+        /* =========================================================
+           TEXTO PURO
+           ========================================================= */
+
+        p {
+
+            margin: 0 0 18px;
+
+            max-width: 80ch;
+        }
+
+
+        .bright {
+            color: #fff;
+        }
+
+
+        .dim {
+            color: #777;
+        }
+
+
+        /* =========================================================
+           ASCII ART
+           ========================================================= */
 
         pre {
-            white-space: pre-wrap;
-            font-family: "Courier New", monospace;
-            line-height: 1.2;
+
+            font-family: inherit;
+
+            font-size: inherit;
+
+            line-height: inherit;
+
+            tab-size: 4;
         }
 
-        .titulo {
-            color: #ffffff;
+
+        pre.ascii {
+
+            margin: 0 0 30px;
+
+            width: 80ch;
+
+            white-space: pre;
+
+            overflow-x: visible;
+
+            color: #ddd;
         }
 
-        .destaque {
-            color: #00ffff;
+
+        /* =========================================================
+           BLOCO DE TERMINAL
+           ========================================================= */
+
+        pre.terminal-block {
+
+            width: 80ch;
+
+            margin: 25px 0;
+
+            padding: 12px;
+
+            border: 1px solid #333;
+
+            background: #090909;
+
+            white-space: pre;
+
+            overflow-x: visible;
+
+            font-family: inherit;
+
+            line-height: 1.4;
+
+            color: #cfcfcf;
         }
 
-        .aviso {
-            color: #ff0000;
+
+        pre.terminal-block:hover {
+            border-color: #555;
         }
+
+
+        /* =========================================================
+           BLOCO DE ALERTA
+           ========================================================= */
+
+        pre.notice {
+
+            width: 80ch;
+
+            margin: 25px 0;
+
+            padding: 12px;
+
+            border-left: 2px solid #777;
+
+            background: #090909;
+
+            white-space: pre;
+
+            overflow-x: visible;
+
+            font-family: inherit;
+
+            color: #aaa;
+        }
+
+
+        /* =========================================================
+           SUBSEÇÃO
+           ========================================================= */
+
+        pre.subsection {
+
+            width: 80ch;
+
+            margin: 35px 0 25px;
+
+            white-space: pre;
+
+            font-family: inherit;
+
+            color: #aaa;
+        }
+
+
+        /* =========================================================
+           SEÇÕES
+           ========================================================= */
+
+        section {
+
+            margin-bottom: 90px;
+
+            scroll-margin-top: 20px;
+        }
+
+
+        section > h2 {
+            display: none;
+        }
+
+
+        /* =========================================================
+           TABELA
+
+           Continua sendo HTML porque representa dados tabulares.
+           ========================================================= */
+
+        .terminal-table {
+
+            width: 80ch;
+
+            min-width: 80ch;
+
+            border-collapse: collapse;
+
+            margin: 25px 0;
+
+            font-family: inherit;
+        }
+
+
+        .terminal-table th,
+        .terminal-table td {
+
+            padding: 7px 9px;
+
+            border: 1px solid #333;
+
+            text-align: left;
+        }
+
+
+        .terminal-table th {
+
+            color: #fff;
+
+            background: #111;
+        }
+
+
+        .terminal-table tr:hover td {
+            background: #111;
+        }
+
+
+        /* =========================================================
+           PROMPT
+           ========================================================= */
+
+        pre.prompt {
+
+            width: 80ch;
+
+            margin-top: 40px;
+
+            color: #777;
+
+            white-space: pre;
+
+            font-family: inherit;
+        }
+
+
+        /* =========================================================
+           FOOTER
+           ========================================================= */
+
+        pre.footer {
+
+            width: 80ch;
+
+            padding-top: 30px;
+
+            border-top: 1px solid #333;
+
+            color: #555;
+
+            white-space: pre;
+
+            font-family: inherit;
+        }
+
+
+        /* =========================================================
+           SCROLLBARS — CHROME / EDGE / SAFARI
+
+           Mantém aparência discreta de terminal.
+           ========================================================= */
+
+        .terminal::-webkit-scrollbar,
+        .terminal-scroll::-webkit-scrollbar,
+        .menu::-webkit-scrollbar {
+
+            width: 8px;
+            height: 8px;
+        }
+
+
+        .terminal::-webkit-scrollbar-track,
+        .terminal-scroll::-webkit-scrollbar-track,
+        .menu::-webkit-scrollbar-track {
+
+            background: #080808;
+        }
+
+
+        .terminal::-webkit-scrollbar-thumb,
+        .terminal-scroll::-webkit-scrollbar-thumb,
+        .menu::-webkit-scrollbar-thumb {
+
+            background: #444;
+
+            border-radius: 0;
+        }
+
+
+        .terminal::-webkit-scrollbar-thumb:hover,
+        .terminal-scroll::-webkit-scrollbar-thumb:hover,
+        .menu::-webkit-scrollbar-thumb:hover {
+
+            background: #555;
+        }
+
+
+        /* =========================================================
+           MONITORES GRANDES
+           ========================================================= */
+
+        @media (min-width: 1500px) {
+
+            .terminal-window {
+
+                width: min(1500px, calc(100vw - 48px));
+            }
+
+
+            .terminal {
+
+                padding-left: 40px;
+
+                padding-right: 40px;
+            }
+
+        }
+
+
+        /* =========================================================
+           NOTEBOOKS / MONITORES PEQUENOS
+           ========================================================= */
+
+        @media (max-width: 1100px) {
+
+            .terminal-window {
+
+                width: calc(100vw - 20px);
+
+                margin-top: 2vh;
+
+                margin-bottom: 2vh;
+            }
+
+
+            .terminal {
+
+                padding-left: 20px;
+
+                padding-right: 20px;
+            }
+
+        }
+
+
+        /* =========================================================
+           ALTURA PEQUENA
+
+           Evita que a janela fique maior que a viewport.
+           ========================================================= */
+
+        @media (max-height: 650px) {
+
+            .terminal-window {
+
+                height: calc(100vh - 20px);
+
+                margin-top: 10px;
+
+                margin-bottom: 10px;
+            }
+
+
+            .terminal {
+
+                padding-top: 18px;
+
+                padding-bottom: 50px;
+            }
+
+
+            .menu {
+
+                padding-top: 10px;
+
+                padding-bottom: 10px;
+            }
+
+        }
+
+
+        /* =========================================================
+           CELULAR / TABLET
+           ========================================================= */
+
+        @media (max-width: 750px) {
+
+            .terminal-window {
+
+                width: 100vw;
+
+                height: 100vh;
+
+                min-height: 0;
+
+                margin: 0;
+
+                border: none;
+            }
+
+
+            .terminal-body {
+
+                flex-direction: column;
+            }
+
+
+            /* -----------------------------------------------------
+               Menu horizontal
+               ----------------------------------------------------- */
+
+            .menu {
+
+                width: 100%;
+
+                flex: 0 0 auto;
+
+                max-height: 155px;
+
+                padding: 10px;
+
+                border-right: none;
+
+                border-bottom: 1px solid #333;
+
+                overflow-x: auto;
+
+                overflow-y: auto;
+            }
+
+
+            .menu-title {
+
+                margin-bottom: 8px;
+            }
+
+
+            .menu a {
+
+                display: inline-block;
+
+                width: auto;
+
+                margin-right: 8px;
+            }
+
+
+            /* -----------------------------------------------------
+               Terminal
+               ----------------------------------------------------- */
+
+            .terminal {
+
+                padding: 20px 0 60px;
+
+                overflow-x: hidden;
+            }
+
+
+            /*
+             * A grade continua com 80ch.
+             *
+             * O scroll horizontal fica no terminal-scroll,
+             * preservando ASCII sem quebrar linhas.
+             */
+
+            .terminal-grid {
+
+                margin-left: 15px;
+
+                margin-right: 15px;
+            }
+
+        }
+
+
+        /* =========================================================
+           TELAS MUITO PEQUENAS
+           ========================================================= */
+
+        @media (max-width: 400px) {
+
+            body {
+                font-size: 13px;
+            }
+
+
+            .terminal-grid {
+
+                margin-left: 10px;
+
+                margin-right: 10px;
+            }
+
+
+            .titlebar {
+
+                padding-left: 8px;
+
+                padding-right: 8px;
+            }
+
+
+            .statusbar {
+
+                padding-left: 8px;
+
+                padding-right: 8px;
+            }
+
+        }
+
+
+        /* =========================================================
+           ACESSIBILIDADE
+
+           Não altera o design normal.
+           Apenas respeita usuários que pedem menos animação.
+           ========================================================= */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            html {
+                scroll-behavior: auto;
+            }
+
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<pre>
-==============================================================================	
-			GRANDCHASE MOBILE (GACHA) - ANALYTICS
-==============================================================================
+
+<div class="terminal-window">
 
 
-Autor: Rouxinol
-Versão: 1.0
-Data: 10/08/2k26
+    <!-- =========================================================
+         TITLE BAR
+         ========================================================= -->
+
+    <header class="titlebar">
+
+        <div class="titlebar-left">
+            GCM_DETONADO.EXE
+        </div>
+
+        <div class="titlebar-right">
+            [ONLINE]
+        </div>
+
+    </header>
 
 
+    <!-- =========================================================
+         STATUS
+         ========================================================= -->
 
-==============================================================================
-[ ÍNDICE ]
-==============================================================================
+    <div class="statusbar">
 
+        GCM DATABASE v1.0
+        │
+        USER: F2P
+        │
+        STATUS: <span class="status-ok">READY</span>
 
-1. INTRODUÇÃO
-2. CONTROLES
-3. DETONADO
-4. ITENS SECRETOS
-5. CHEFÃO FINAL
-6. PERGUNTAS FREQUENTES
-7. CRÉDITOS
-
-
-
-==============================================================================
-[ CONCEITO PRINCIPAL ]
-==============================================================================
+    </div>
 
 
+    <!-- =========================================================
+         CORPO
+         ========================================================= -->
+
+    <div class="terminal-body">
+
+
+        <!-- =====================================================
+             MENU
+             ===================================================== -->
+
+        <nav class="menu" aria-label="Navegação principal">
+
+<pre class="menu-title">╔══════════════════════╗
+║     GCM DATABASE     ║
+║      NAVIGATION      ║
+╚══════════════════════╝</pre>
+
+            <a href="#conceito">[01] CONCEITO</a>
+            <a href="#geral">[02] GERAL</a>
+            <a href="#herois">[03] TIPOS DE HERÓI</a>
+            <a href="#investimento">[04] INVESTIMENTO</a>
+            <a href="#equipes">[05] EQUIPES</a>
+            <a href="#diarios">[06] DAILY</a>
+            <a href="#vulcanus">[07] VULCANUS</a>
+            <a href="#conteudos">[08] CONTEÚDOS</a>
+            <a href="#sisteminhas">[09] URMOMGAE</a>
+            <a href="#interacoes">[10] INTERAÇÕES</a>
+            <a href="#descendencia">[11] DESCENDÊNCIA</a>
+
+<pre class="dim">
+───────────────────────
+SYSTEM
+
+[ESC] MENU
+[↑↓] SCROLL
+[ENTER] SELECT
+</pre>
+
+        </nav>
+
+
+        <!-- =====================================================
+             CONTEÚDO
+             ===================================================== -->
+
+        <main class="terminal">
+
+            <div class="terminal-scroll">
+
+                <div class="terminal-grid">
+
+
+                    <!-- =================================================
+                         BOOT
+                         ================================================= -->
+
+<pre class="ascii">
+╔════════════════════════════════════════════════════════════════════════════╗
+║							GCM_DETONADO.EXE			    		 		 ║
+║									       									 ║
+║							GRAND CHASE DATABASE							 ║
+║									     									 ║
+║							F2P SURVIVAL MANUAL								 ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+> Loading database...
+> Loading characters............... OK
+> Loading equipment................ OK
+> Loading bullshit.................. OK
+
+> USER PROFILE: F2P
+> RESOURCE STATUS: LIMITED
+
+> ACCESS GRANTED.
+
+░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░</pre>
+
+
+                    <!-- =================================================
+                         CONCEITO
+                         ================================================= -->
+
+                    <section id="conceito">
+
+<pre class="ascii">==============================================================================
+[ 01 :: CONCEITO PRINCIPAL ]
+==============================================================================</pre>
+
+                        <p>
 O objetivo de um jogador F2P não é buildar os heróis mais fortes possíveis.
+                        </p>
 
+                        <p>
 O objetivo é criar uma conta capaz de:
-    • Fazer vários conteúdos.
+                        </p>
+
+<pre class="terminal-block">    • Fazer vários conteúdos.
     • Gastar recursos com eficiência.
     • Evitar investimentos em heróis muito nichados.
-    • Manter uma progressão estável.
+    • Manter uma progressão estável.</pre>
 
-A pergunta errada:
-"Qual é o heróis mais valioso do jogo?"
+<pre class="ascii">┌─ REGRA Nº 01 ──────────────────────────────────────────────────────────────┐
+│                                                                            │
+│ A pergunta errada:                                                         │
+│                                                                            │
+│     "Qual é o herói mais valioso do jogo?"                                 │
+│                                                                            │
+│ A pergunta correta:                                                        │
+│                                                                            │
+│     "Qual herói é mais valioso NESSE MOMENTO?"                             │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘</pre>
+
+                    </section>
 
 
-A pergunta correta:
-"Qual herói mais valioso nesse momento?"
+                    <!-- =================================================
+                         GERAL
+                         ================================================= -->
 
+                    <section id="geral">
 
+<pre class="ascii">==============================================================================
+[ 02 :: GERAL ]
+==============================================================================</pre>
 
-==============================================================================
-[ GERAL ]
-==============================================================================
-
-
+                        <p>
 Todos os heróis seguem a mesma base de evolução.
+                        </p>
 
+                        <p>
 O custo para evoluir um personagem é igual para todos.
+                        </p>
 
-    • Chaser Nv.25 -> 600 Cubos + ≈900 Essências + ≈70kk de Ouro
-    • Selo da Alma Nv.15 -> 3000 Cubos + ≈2500 Essências + ≈100kk de Ouro
-    • Descendência Nv.10 -> 38k de Cristais + 6k de Essências + 50kk de Ouro 
+<pre class="terminal-block">    • Chaser Nv.25 → 600 Cubos + ≈900 Essências + ≈70kk de Ouro
+    • Selo da Alma Nv.15 → 3000 Cubos + ≈2500 Essências + ≈100kk de Ouro
+    • Descendência Nv.10 → 38k de Cristais + 6k de Essências + 50kk de Ouro</pre>
 
+                        <p>
 Portanto:
-    O que diferencia um herói bom de um herói ruim não é o quão caro ele é.
+                        </p>
 
-    Mas,
+                        <p class="bright">
+O que diferencia um herói bom de um herói ruim não é o quão caro ele é.
+                        </p>
 
-    • Quanto conteúdo ele faz pelo investimento que ele exige.
-    • Quanto "tempo ele economiza" pelos "personagens que ele substitui".
+                        <p>
+Mas:
+                        </p>
+
+<pre class="terminal-block">    • Quanto conteúdo ele faz pelo investimento que exige.
+    • Quanto "tempo ele economiza" pelos personagens que substitui.</pre>
+
+<pre class="ascii">┌─ OBSERVAÇÃO ───────────────────────────────────────────────────────────────┐
+│                                                                            │
+│ Nem todos os personagens possuem os mesmos timings.                        │
+│                                                                            │
+│ Alguns funcionam muito bem no Selo da Alma Nv.15.                          │
+│ Outros precisam de Descendência Nv.3 → Nv.5 → Nv.10.                       │
+│                                                                            │
+│     → "Esse herói funciona no estágio atual?"                              │
+│                                                                            │
+└────────────────────────────────────────────────────────────────────────────┘</pre>
+
+                        <p>
+Um personagem pode ser muito META e ainda assim ter um valor baixo pra sua
+conta.
+
+e.g:
+                        </p>
+
+<pre class="terminal-block">HERÓI A
+────────────────────────────────
+Gera números absurdos.
+
+Mas:
+
+    Precisa de set específico.
+    Precisa de comp específica.
+    Faz pouco conteúdo.
 
 
-OBSERVAÇÃO::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-::
-:: Nem todos os personagens tem os mesmos timings.
-:: Alguns funcionam muito bem no: Selo da Alma Nv.15;
-:: Outros precisam de: Descendência Nv.3 -> Nv. 5 -> Nv. 10; pra funcionar
-::
-:: -> "Esse herói funciona no estágio atual?"
-::
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+HERÓI B
+────────────────────────────────
+Números OK.
 
+Ainda não ganhou o novo sistema
+"Holy-Motherfucking-Ego".
 
-Um personagem pode ser muito META e ainda assim, ter um valor baixo pra sua conta 
+Mas:
 
-e.g. Herói A: Gera números absurdos, mas:
-Precisa de um set específico -> Precisa de comp específica -> Faz pouco conteúdo.
+    Funciona em vários modos.
+    Funciona com vários times.
+    Exige menos recursos.</pre>
 
-e.g. Herói B: Números okay, ainda não ganhou o novo sistema "Holy-Motherfucking-Ego".
-Funciona em vários modos -> Funciona com vários times -> Exige menos recursos 
-
+                        <p class="bright">
 Se tu não for um Ranker:
+                        </p>
+
+                        <p>
 i.e. Herói B geralmente tem mais valor.
+                        </p>
+
+                    </section>
 
 
+                    <!-- =================================================
+                         TIPOS DE HERÓI
+                         ================================================= -->
 
-==============================================================================
-[ TIPOS DE HERÓIS ]
-==============================================================================
-Grand Chase Mobile possui três categorias principais de personagens...
+                    <section id="herois">
 
+<pre class="ascii">==============================================================================
+[ 03 :: TIPOS DE HERÓIS ]
+==============================================================================</pre>
 
+                        <p>
+Grand Chase Mobile possui três categorias principais de personagens.
+                        </p>
 
-[SR] Super Raro		- Versão Base do Boneco.
-		
-		Podem ser adquiridos através da Invocação Garantida ou da 
-		roda-a-roda (Jequiti) Gachapon. Se o herói for um dos últimos
-		lançados, só pode ser adquirido pela Invocação Aleatória
-		ou pelo Gachapon.
+<pre class="terminal-block">[SR] SUPER RARO
+──────────────────────────────────────────────────────────────────────
 
+Versão Base do Boneco.
 
---------------------------------------------------------------------------------
+Podem ser adquiridos através da Invocação Garantida ou da roda-a-roda
+(Jequiti) Gachapon.
 
-
-[T] Troca de Classe	- Versão Alternativa do Boneco.
-
-		Requisitos:
-		├── Ter Herói [SR] Chaser Nv.20
-		├── Completar Missão De Troca de Classe
-		└── obs:Você NÃO perde o personagem base.
-
-		A versão [SR] e a versão [T] são unidades separadas.
-
-		Portanto, não compartilham:
-		├── Skins
-		├── Materiais
-		├── Equipamentos exclusivos
-		└── Progressão
-
-		Apesar de serem o mesmo Herói, são unidades distintas.
+Se o herói for um dos últimos lançados, só pode ser adquirido pela
+Invocação Aleatória ou pelo Gachapon.</pre>
 
 
---------------------------------------------------------------------------------
+<pre class="terminal-block">[T] TROCA DE CLASSE
+──────────────────────────────────────────────────────
+
+Versão Alternativa do Boneco.
+
+Requisitos:
+
+    ├── Ter Herói [SR] Chaser Nv.20
+    ├── Completar Missão de Troca de Classe
+    └── Você NÃO perde o personagem base.
+
+A versão [SR] e a versão [T] são unidades separadas.
+
+Portanto, não compartilham:
+
+    ├── Skins
+    ├── Materiais
+    ├── Equipamentos exclusivos
+    └── Progressão</pre>
 
 
-[S] Herói Especial	- d̢́̀͠ ̴̵͝ń͘ ͘͢υ̴̴̢̢ ̀͢͢ο̸̴ ̀͘͜F̸̸̀ ̷̡̡τ̵̀͞ ̵̵̡ò̶ ͘͟͠Ν̵̷͘ ̵̡͜͝4̶̢́͢ ́͢.͢͠͞ ̵͜0̴͘͜ ̷͜͝.̸̢̀͠ ̶͘͠4̢͟͟?!!
+<pre class="terminal-block">[S] HERÓI ESPECIAL
+────────────────────────────────────────────────────────
 
-		Características:
-		├──Aparecem em eventos especiais (semestral).
-		├──Só pode pegar 1 (um) por evento.
-		├──Chegam com Selo da Alma Nv.15.
-		└──Alguns chegam com Descendência Nv. 5.
+ERRO404
 
-		Um Herói Especial pode ser:
-		★ Uma bênção para a conta, se chegar na hora certa
-		☆ Um tanto faz, se vc já tiver td pronto
-		
+Características:
 
+    ├── Aparecem em eventos especiais.
+    ├── Só pode pegar 1 (um) por evento.
+    ├── Chegam com Selo da Alma Nv.15.
+    └── Alguns chegam com Descendência Nv.5.
 
+Um Herói Especial pode ser:
 
+    ★ Uma bênção para a conta, se chegar na hora certa.
+    ☆ Um tanto faz, se você já tiver tudo pronto.</pre>
 
-
-
-							 Legado do Criador - XX/YY/ZZZZ/A.B
-❄︎♒︎♏︎   ✌︎◻︎□︎♍︎♋︎●︎⍓︎◻︎⬧︎♏︎   ♓︎⬧︎   ♌︎♏︎♓︎■︎♑︎   ◻︎◆︎⬧︎♒︎♏︎♎︎   ♐︎□︎❒︎⬥︎♋︎❒︎♎︎... ❄︎♒︎♏︎   ✌︎♌︎♌︎♋︎♎︎□︎■︎'⬧︎   ◻︎□︎⬥︎♏︎❒︎   ♋︎❒︎♏︎   ♐︎♋︎❒︎   ♑︎❒︎♏︎♋︎⧫︎♏︎❒︎   ⧫︎♒︎♋︎■︎   ⬥︎♏︎   ♏︎⌧︎◻︎♏︎♍︎⧫︎♏︎♎︎... 👇♏︎   ⬥︎♒︎□︎   ⬥︎♋︎⬧︎   ♎︎♏︎⬧︎♓︎♑︎■︎♋︎⧫︎♏︎♎︎   ⧫︎□︎   □︎◻︎♏︎■︎   ⧫︎♒︎♏︎   ♑︎♋︎⧫︎♏︎⬧︎   ♋︎■︎♎︎   ⬧︎⧫︎♋︎❒︎⧫︎   ⧫︎♒︎♏︎   ♐︎●︎□︎□︎♎︎   ♓︎⬧︎   ♋︎♍︎⧫︎◆︎♋︎●︎●︎⍓︎   ❄︎♒︎♏︎   ⚐■︎♏︎   ♒︎□︎●︎♎︎♓︎■︎♑︎   ♓︎⧫︎   ♍︎●︎□︎⬧︎♏︎♎︎... ⚐◆︎❒︎   ⬧︎♓︎⧫︎◆︎♋︎⧫︎♓︎□︎■︎   ⬥︎□︎◆︎●︎♎︎   ♌︎♏︎   ♒︎♓︎●︎♋︎❒︎♓︎□︎◆︎⬧︎   ♓︎♐︎   ♓︎⧫︎   ⬥︎♋︎⬧︎■︎'⧫︎   ⬧︎□︎   ♎︎♓︎❒︎♏︎... ❄︎♒︎♏︎♓︎❒︎   😐︎♋︎❒︎❍︎♋︎   ♓︎⬧︎   ♏︎■︎□︎◆︎♑︎♒︎   ⧫︎□︎   ❒︎♏︎■︎♎︎♏︎❒︎   ♐︎♋︎⧫︎♏︎   ◆︎⬧︎♏︎●︎♏︎⬧︎⬧︎... ❄︎♒︎♏︎♓︎❒︎   ◻︎□︎⬥︎♏︎❒︎   ❖︎♓︎♏︎   ⬥︎♓︎⧫︎♒︎   ⧫︎♒︎♏︎   ♑︎□︎♎︎⬧︎... 👎︎♋︎❒︎♏︎   ✋︎   ♋︎⬧︎&︎   ⬥︎♒︎♏︎❒︎♏︎   ♎︎□︎   ⧫︎♒︎♏︎   👍︎❒︎♏︎♋︎⧫︎□︎❒︎   ⬥︎♋︎■︎♎︎♏︎❒︎⬧︎✍   ✋︎■︎♎︎♓︎♐︎♐︎♏︎❒︎♏︎■︎⧫︎   ⧫︎□︎   ⧫︎♒︎♏︎   ⬥︎♏︎♏︎◻︎♓︎■︎♑︎⬧︎   □︎♐︎   ♓︎⧫︎⬧︎   ❍︎♋︎&︎♓︎■︎♑︎✍
-
-									-???????
+                    </section>
 
 
+                    <!-- =================================================
+                         INVESTIMENTO
+                         ================================================= -->
 
+                    <section id="investimento">
 
+<pre class="ascii">==============================================================================
+[ 04 :: INVESTIMENTO ]
+==============================================================================</pre>
 
-==============================================================================
-[ INVESTIMENTO ]
-==============================================================================
-
-
+                        <p>
 Investir em vários personagens não impede a progressão.
+                        </p>
 
+                        <p>
 O problema é espalhar recursos demais sem construir uma base sólida.
+                        </p>
 
+                        <p class="bright">
 A recomendação geral é evoluir um personagem de cada vez.
+                        </p>
 
-Por quê?
+<pre class="terminal-block">POR QUÊ?
 
-Porque cada recurso tem um gargalo diferente:
+Porque cada recurso possui um gargalo diferente:
+
     • Cubos.
     • Essências.
     • Cristais.
-    • Equipamentos.
+    • Equipamentos.</pre>
 
 
-─────────────────────────────────────────────────────────────
-				ESTRATÉGIA
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                              ESTRATÉGIA
+────────────────────────────────────────────────────────────────────────────────</pre>
 
 
-Criar uma base de times:
-Time Vida + Time Equilíbrio + Time Destruição;
-Com Heróis Selo da Alma Nv.15.	
-		↓
-Buscar Nv. Mínimo de Descendência necessária,
-nos personagens que dependem da descendência.
-		↓
-Ideal é montar:
-2 Times de cada atributo.
+<pre class="terminal-block">Criar uma base de times:
 
-O motivo? O jogo constantemente exige:
+    Time Vida
+    +
+    Time Equilíbrio
+    +
+    Time Destruição
 
-    • Diferentes atributos pra diferentes conteúdos (Verde -> Azul -> Vermelho -> Repete).
-    • Diferentes danos (Físico / Mágico).
-    • Diferentes funções (Sem Guardião / Sem Atirador <-> Sem Mago / Sem Hab. Especial...)
+Com Heróis Selo da Alma Nv.15.
 
-Não fique dependendo de um único herói, ou de um único time, para fazer tudo.
+                         ↓
 
+Buscar o Nv. mínimo de Descendência necessário
+nos personagens que dependem dela.
 
+                         ↓
 
-==============================================================================
-[ FORMAÇÃO DE EQUIPES ]
-==============================================================================
+Ideal:
+
+    2 Times de cada atributo.</pre>
 
 
+                        <p>
+O jogo constantemente exige:
+                        </p>
+
+<pre class="terminal-block">    • Diferentes atributos.
+      Verde → Azul → Vermelho → Repete.
+
+    • Diferentes danos.
+      Físico / Mágico.
+
+    • Diferentes funções.
+      Sem Guardião / Sem Atirador
+      ↔
+      Sem Mago / Sem Hab. Especial...</pre>
+
+
+                        <p class="bright">
+Não fique dependendo de um único herói ou de um único time para fazer tudo.
+                        </p>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         EQUIPES
+                         ================================================= -->
+
+                    <section id="equipes">
+
+<pre class="ascii">==============================================================================
+[ 05 :: FORMAÇÃO DE EQUIPES ]
+==============================================================================</pre>
+
+                        <p>
 Uma equipe normalmente possui:
-    4 Heróis (máximo possível)
+                        </p>
 
-Preferencialmente:
+                        <p class="bright">
+4 Heróis — máximo possível.
+                        </p>
+
+<pre class="terminal-block">Preferencialmente:
+
     • Do mesmo atributo.
     • Com boa sinergia.
-    • Com funções complementares.
+    • Com funções complementares.</pre>
 
 
-─────────────────────────────────────────────────────────────
-				FUNÇÕES
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                                FUNÇÕES
+────────────────────────────────────────────────────────────────────────────────</pre>
 
 
-    Guardião   → Escudo de Carne
+<pre class="terminal-block">GUARDIÃO
+    → Escudo de Carne
 
-    Guerreiro  → Debuff de inimigos e Buff de Aliados
+GUERREIRO
+    → Debuff de inimigos
+    → Buff de aliados
 
-    DPS        → Mago / Atirador ... Dá dano.
+DPS
+    → Mago / Atirador
+    → Dá dano.
 
-    Sacerdote  → Gera SP acima de tudo. Qualquer coisa além disso é lucro.
-		Se ele faz tudo, mas não gera SP... Péssimo Sacerdote.
+SACERDOTE
+    → Gera SP acima de tudo.
 
+    Qualquer coisa além disso é lucro.
 
-─────────────────────────────────────────────────────────────
-				SCORING
-─────────────────────────────────────────────────────────────
-
-
-Objetivo:
-Causar mais dano em menos tempo.
-
-Formação:
-	Guerreiro → DPS → DPS → Sacerdote
+    Se ele faz tudo, mas não gera SP...
+    Péssimo Sacerdote.</pre>
 
 
-─────────────────────────────────────────────────────────────
-				PROGRESSÃO
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                                SCORING
+────────────────────────────────────────────────────────────────────────────────</pre>
 
 
-Objetivo:
-Terminar/Sobreviver a fase.
+<pre class="terminal-block">OBJETIVO
+
+    Causar mais dano em menos tempo.
 
 
-Formação:
-        Guardião → Guerreiro → DPS → Sacerdote
+FORMAÇÃO
 
-........................................................
-.
-.	A diferença:
-.	Score → "Quanto dano eu consigo causar?"
-.	Progressão → "Eu consigo tankar essa porra?"
-.
-.
-.	"Não tente cortar carne com um machado,
-.	nem cavar um buraco com uma colher"
-.				- Sutra Jya'lin Rabei
-........................................................
+    GUERREIRO → DPS → DPS → SACERDOTE</pre>
 
 
-==============================================================================
-[ DIÁRIOS ]
-==============================================================================
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                               PROGRESSÃO
+────────────────────────────────────────────────────────────────────────────────</pre>
 
 
+<pre class="terminal-block">OBJETIVO
+
+    Terminar / Sobreviver à fase.
+
+
+FORMAÇÃO
+
+    GUARDIÃO → GUERREIRO → DPS → SACERDOTE</pre>
+
+
+<pre class="notice">................................................................
+
+A diferença:
+
+    SCORE
+    → "Quanto dano eu consigo causar?"
+
+    PROGRESSÃO
+    → "Eu consigo tankar essa porra?"
+
+................................................................
+
+"Não tente cortar carne com um machado,
+ nem cavar um buraco com uma colher."
+
+                    — Sutra Jya'lin Rabei</pre>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         DAILY
+                         ================================================= -->
+
+                    <section id="diarios">
+
+<pre class="ascii">==============================================================================
+[ 06 :: DIÁRIOS ]
+==============================================================================</pre>
+
+                        <p>
 Conteúdos diários são a fundação da economia da conta.
+                        </p>
+
+                        <p>
+Pequenas recompensas repetidas todo dia se tornam grandes recursos a longo
+prazo.
+                        </p>
 
 
-Pequenas recompensas repetidas todo dia se tornam grandes recursos longo prazo.
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                         LABIRINTO FANTASMAGÓRICO
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-─────────────────────────────────────────────────────────────
-			LABIRINTO FANTASMAGÓRICO
-─────────────────────────────────────────────────────────────
+<pre class="terminal-block">Entrega:
 
-Entrega:
-	-> 750 Bênçãos
-	-> 400 frag. de Martelo de Ernasis
-
-─────────────────────────────────────────────────────────────
-			    DEFESA DIÁRIA
-─────────────────────────────────────────────────────────────
-
-Entrega:
-	-> 90 Graças das Deusas
-	-> 750 Gema Azul
-	-> 15 Escolhas das Deusas
-
-─────────────────────────────────────────────────────────────
-			  MODO EXTERMÍNIO
-─────────────────────────────────────────────────────────────
-
-Entrega:
-	-> 80 Cristais
-	-> 20 Cubos
-
-─────────────────────────────────────────────────────────────
-			   O PROCURADO
-─────────────────────────────────────────────────────────────
-
-Entrega:
-
-	-> Oro...
+    → 750 Bênçãos
+    → 400 frag. de Martelo de Ernasis</pre>
 
 
-─────────────────────────────────────────────────────────────
-		TORRE DOS DESAFIOS & TORRE DOS HERÓIS
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                              DEFESA DIÁRIA
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Entrega:
+<pre class="terminal-block">Entrega:
+
+    → 90 Graças das Deusas
+    → 750 Gema Azul
+    → 15 Escolhas das Deusas</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                             MODO EXTERMÍNIO
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+<pre class="terminal-block">Entrega:
+
+    → 80 Cristais
+    → 20 Cubos</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                               O PROCURADO
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+<pre class="terminal-block">Entrega:
+
+    → Oro...</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                    TORRE DOS DESAFIOS & TORRE DOS HERÓIS
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+                        <p>
+Não é diário, mas vamo colocar ele aq vai...
+                        </p>
+
+<pre class="terminal-block">Entrega:
 
     • Bilhetes de Gachapon.
     • Bênçãos.
@@ -369,119 +1428,191 @@ Entrega:
     • Energia.
     • Mais coisa.
 
-maior o andar -> melhor a recompensa.
+maior o andar → melhor a recompensa.</pre>
+
+                    </section>
 
 
-São especialmente importantes para:
-    • Contas novas.
-    • Jogadores retornando.
-    • Contas reconstruindo progresso.
+                    <!-- =================================================
+                         VULCANUS
+                         ================================================= -->
 
+                    <section id="vulcanus">
 
-==============================================================================
-[ FORNALHA INFERNAL ]
-==============================================================================
+<pre class="ascii">==============================================================================
+[ 07 :: FORNALHA INFERNAL ]
+==============================================================================</pre>
 
-
+                        <p>
 A Fornalha Infernal funciona de maneira diferente da maioria dos conteúdos.
+                        </p>
 
-Aqui, o fator mais importante além da pontuação obtida é o seu Battle Power (BP).
+                        <p>
+Aqui, o fator mais importante além da pontuação obtida é o seu Battle Power
+(BP).
+                        </p>
 
+                        <p class="bright">
 Quanto maior o BP da conta, melhores serão as recompensas.
+                        </p>
 
 
-			TIERS
+<pre class="terminal-block">                              TIERS
 
-    1,00 M ─────────► 1,99 M = Escudeiro
+    1,00 M ─────────► 1,99 M    = ESCUDEIRO
 
-    2,00 M ─────────► 2,99 M  = Cavaleiro
+    2,00 M ─────────► 2,99 M    = CAVALEIRO
 
-    3,00 M ─────────► 3,99 M  = Paladino
+    3,00 M ─────────► 3,99 M    = PALADINO
 
-    4,00 M+ ────────►   ???   = General
+    4,00 M+ ────────► ???       = GENERAL</pre>
 
 
-    Última colocação (Escudeiro)
+<pre class="terminal-block">ÚLTIMA COLOCAÇÃO
+
+    ESCUDEIRO
         ≈ 3.000 Gemas
 
-    Última colocação (General)
-        ≈ 25.000 Gemas
+
+    GENERAL
+        ≈ 25.000 Gemas</pre>
 
 
+                        <p class="bright">
 A diferença é enorme.
+                        </p>
 
+                        <p>
 Por isso fortalecer a conta vale muito mais do que apenas melhorar personagens.
+                        </p>
+
+                    </section>
 
 
+                    <!-- =================================================
+                         CONTEÚDOS
+                         ================================================= -->
 
-==============================================================================
-[ RECOMPENSAS POR CONTEÚDO ]
-==============================================================================
+                    <section id="conteudos">
 
+<pre class="ascii">==============================================================================
+[ 08 :: RECOMPENSAS POR CONTEÚDO ]
+==============================================================================</pre>
+
+                        <p>
 Cada modo de jogo possui uma função específica.
+                        </p>
 
+                        <p>
 Não existem conteúdos "obrigatórios".
+                        </p>
 
+                        <p class="bright">
 Existem conteúdos que entregam recursos que sua conta precisa.
-
-+---------------------------+--------------------------------+
-| Conteúdo                  | Principal Recompensa           |
-+---------------------------+--------------------------------+
-| Fornalha Infernal         | Gemas / Energia / Queima x3    |
-| World Boss Season 1       | Essência / Cubos / Cristais    |
-| World Boss Season 2       | Cubos / Cristais               |
-| RAID                      | Equipamentos                   |
-| Martelo de Ernasis        | Joias                          |
-| Mar da Eternidade         | Bênçãos                        |
-| Chefe de Guilda           | Graças da Deusa                |
-| Núcleo Final              | BP / Passivas                  |
-| Altar do Tempo            | Relíquias                      |
-| Ninho do Berkas           | kkkkkkberka                    |
-+---------------------------+--------------------------------+
+                        </p>
 
 
+                        <table class="terminal-table">
+
+                            <thead>
+
+                                <tr>
+                                    <th>CONTEÚDO</th>
+                                    <th>PRINCIPAL RECOMPENSA</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                <tr>
+                                    <td>Fornalha Infernal</td>
+                                    <td>Gemas / Energia / Queima x3</td>
+                                </tr>
+
+                                <tr>
+                                    <td>World Boss Season 1</td>
+                                    <td>Essência / Cubos / Cristais</td>
+                                </tr>
+
+                                <tr>
+                                    <td>World Boss Season 2</td>
+                                    <td>Cubos / Cristais</td>
+                                </tr>
+
+                                <tr>
+                                    <td>RAID</td>
+                                    <td>Equipamentos</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Martelo de Ernasis</td>
+                                    <td>Joias</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Mar da Eternidade</td>
+                                    <td>Bênçãos</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Chefe de Guilda</td>
+                                    <td>Graças da Deusa</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Núcleo Final</td>
+                                    <td>BP / Passivas</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Altar do Tempo</td>
+                                    <td>Relíquias</td>
+                                </tr>
+
+                                <tr>
+                                    <td>Ninho do Berkas</td>
+                                    <td>kkkkkkberka</td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
 
 
-─────────────────────────────────────────────────────────────
-				WORLD BOSS
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                              WORLD BOSS
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Prioridade:
-★★★★★
+                        <p>Prioridade: ★★★★★</p>
 
-Principal fonte de materiais de evolução do jogo.
+<pre class="terminal-block">Principal fonte de materiais de evolução do jogo.
 
-:::::::::::::::::::::::::::::::::Season 1:::::::::::::::::::::::::::::::::
-
-Entrega:
+SEASON 1
 
     • Essência de Classe.
     • Cubos de Crescimento.
     • Cristais Divinos.
 
-:::::::::::::::::::::::::::::::::Season 2:::::::::::::::::::::::::::::::::
-
-Entrega:
+SEASON 2
 
     • Cubos de Crescimento.
-    • Cristais Divinos.
+    • Cristais Divinos.</pre>
 
 
-Se precisar escolher entre poucos conteúdos para focar, World Boss quase 
+                        <p>
+Se precisar escolher entre poucos conteúdos para focar, World Boss quase
 sempre vai estar entre eles.
+                        </p>
 
 
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                                RAIDS
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-─────────────────────────────────────────────────────────────
-				RAIDS
-─────────────────────────────────────────────────────────────
+                        <p>Prioridade: ★★★★☆</p>
 
-Prioridade:
-★★★★☆
-
-Obter equipamentos e materiais de melhoria.
-
-
+<pre class="terminal-block">Obter equipamentos e materiais de melhoria.
 
 Sem bons equipamentos:
 
@@ -489,129 +1620,130 @@ Sem bons equipamentos:
     ↓↓ Battle Power
     ↓↓↓ Progressão
 
+Não adianta ter um boneco bom usando set 11.</pre>
 
 
-Não adianta ter um boneco bom usando set 11.
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                           MAR DA ETERNIDADE
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+                        <p>Prioridade: ★★★☆☆</p>
+
+<pre class="terminal-block">Principal recompensa:
+
+    Maior fonte de Benção e Fragmentos da Coragem
+    no começo/meio do jogo.</pre>
 
 
-
-─────────────────────────────────────────────────────────────
-			MAR DA ETERNIDADE
-─────────────────────────────────────────────────────────────
-
-Prioridade:
-★★★☆☆
-
-Principal recompensa:
-    Maior fonte de Benção e Fragmentos da Coragem no começo/meio do jogo.
-
-
+                        <p>
 É um conteúdo muito sólido. Mercuria é um mix de esponja + canhão.
+                        </p>
 
+                        <p>
 Sobreviver a Mercuria não é necessário, basta bater a cota de dano.
-
-Comece do nível mais alto pro mais baixo, até chegar num nível que possa vencer.
-
-Nesse nível, tente pegar o Rank mais alto (EX) -> (SSS) -> (SS) -> (S) -> (A)...
-
-Chato, mas Maestria de Herói é um dos jeitos mais consistentes de progredir.
+                        </p>
 
 
-─────────────────────────────────────────────────────────────
-			MARTELO DE ERNASIS
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                          MARTELO DE ERNASIS
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Prioridade:
-★★★☆☆
+                        <p>Prioridade: ★★★☆☆</p>
 
-Principal recompensa:
+<pre class="terminal-block">Principal recompensa:
+
     • Overdium
     • Ouro
 
-Essenciais para a Transcendência das armas. Quanto mais avançada a sua conta, 
-maior a importância do Martelo de Ernasis.
-
-+ - - - - - - - - - - - - - - I M P O R T A N T E - - - - - - - - - - - - - - 
-|
-|		Tente sempre fazer o ciclo completo;
-|		(Maldição) -> (Relâmpago) -> (Morte); 
-|			o bônus é bom...
-|
-+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-
-Se no começo do jogo, vc conseguir bater nos níveis menores, tente farmar umas
-pedras roxas... Elas valem uma boa grana no leilão.
+Essenciais para a Transcendência das armas.</pre>
 
 
-─────────────────────────────────────────────────────────────
-				NÚCLEO FINAL
-─────────────────────────────────────────────────────────────
+<pre class="notice">+------------------------------------------------------------------------------+
+|                              I M P O R T A N T E                             |
++------------------------------------------------------------------------------+
 
-Prioridade:
-★★☆☆☆
+Tente sempre fazer o ciclo completo:
 
-Principal recompensa:
+        (Maldição) → (Relâmpago) → (Morte)
+
+        O bônus é bom...</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                              NÚCLEO FINAL
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+                        <p>Prioridade: ★★☆☆☆</p>
+
+<pre class="terminal-block">Principal recompensa:
+
     • Aumentar o Battle Power da conta.
     • Passivas permanentes.
 
-É um investimento de longo prazo.
-Jogadores iniciantes/retornantes/F2P normalmente terão outras prioridades.
+É um investimento de longo prazo.</pre>
 
 
-─────────────────────────────────────────────────────────────
-				CHEFE DE GUILDA
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                            CHEFE DE GUILDA
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Prioridade:
-★★☆☆☆
+                        <p>Prioridade: ★★☆☆☆</p>
 
-Principal recompensa:
+<pre class="terminal-block">Principal recompensa:
+
     • Graças da Deusa.
 
-Vale participar sempre que possível. (Mais pra dar uma força pro clã msm).
+Vale participar sempre que possível.
 
-Mesmo sem disputar ranking, um Equipamento Exclusivo faz estrago Nv. 8...
+(Mais pra dar uma força pro clã msm).</pre>
 
-─────────────────────────────────────────────────────────────
-				ALTAR DO TEMPO
-─────────────────────────────────────────────────────────────
 
-Prioridade:
-★☆☆☆☆
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                             ALTAR DO TEMPO
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Principal recompensa:
+                        <p>Prioridade: ★☆☆☆☆</p>
+
+<pre class="terminal-block">Principal recompensa:
+
     • Relíquias.
 
-Relíquias boas possuem grande impacto no endgame.
-
-Para iniciantes/retornantes/F2P, existem conteúdos mais importantes.
+Relíquias boas possuem grande impacto no endgame.</pre>
 
 
-─────────────────────────────────────────────────────────────
-				NINHO DO BERKAS
-─────────────────────────────────────────────────────────────
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                             NINHO DO BERKAS
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Prioridade:
-☆☆☆☆☆
+                        <p>Prioridade: ☆☆☆☆☆</p>
 
-...
-
+<pre class="terminal-block">...
 
 "Pq?"
 
-
 ...
 
+</pre>
 
-==============================================================================
-[ SISTEMAS MENORES ]
-==============================================================================
+                    </section>
 
 
-─────────────────────────────────────────────────────────────
+                    <!-- =================================================
+                         SISTEMINHAS
+                         ================================================= -->
+
+                    <section id="sisteminhas">
+
+<pre class="ascii">==============================================================================
+[ 09 :: SISTEMAS MENORES ]
+==============================================================================</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
                               ACESSÓRIOS
-─────────────────────────────────────────────────────────────
-			Pulseira • Colar • Anel
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+<pre class="terminal-block">Pulseira • Colar • Anel
 
 Efeito:
 
@@ -620,157 +1752,278 @@ Efeito:
     ↑ Passivas PvP
 
 Desbloqueio:
-    Modo de Ataque aos Chefes
 
-Observação:
-Alguns heróis possuem grande diferença de desempenho usando seus acessórios.
-
-Exemplos: Ganymede (T) • Lire (T) • Lupus
+    Modo de Ataque aos Chefes</pre>
 
 
-─────────────────────────────────────────────────────────────
-			TRANSCENDÊNCIA DA ARMA
-─────────────────────────────────────────────────────────────
-			Somente a arma principal.
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                        TRANSCENDÊNCIA DA ARMA
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+<pre class="terminal-block">Somente a arma principal.
 
 Requisito:
+
     Arma Nv.9
 
 Após isso:
+
     Pode transcender +9 níveis.
 
 Utiliza:
-    Predas do Martelo de Ernasis
 
-Estratégia:
-├── +1 até +7 = Seguro
-├── +8 e +9 = Usar Joias Roxas
-└── Motivo:
-	└── Cada nível possui chance menor de sucesso.
+    Pedras do Martelo de Ernasis
 
-─────────────────────────────────────────────────────────────
-			SLOTS DE EQUIPAMENTOS
-─────────────────────────────────────────────────────────────
-		• Arma • Sub-Arma • Corpo • Mãos • Pés
+ESTRATÉGIA
+
+    ├── +1 até +7 = Seguro
+    ├── +8 e +9 = Usar Joias Roxas
+    └── Cada nível possui chance menor de sucesso.</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                         SLOTS DE EQUIPAMENTOS
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+<pre class="terminal-block">• Arma
+• Sub-Arma
+• Corpo
+• Mãos
+• Pés
 
 Cada slot possui:
+
     Nv.1 → Nv.9
 
 No Nv.9:
+
     Slot pode ser promovido.
 
 Evolução:
-    Bronze → Prata → Ouro → Platina
 
-CUIDADO
+    Bronze → Prata → Ouro → Platina</pre>
+
+
+<pre class="notice">CUIDADO
+
 ├── Muito Ouro.
 ├── Material caro.
 └── RNG pesado.
 
-							Boa sorte kkkkj.
+                         Boa sorte kkkkj.</pre>
+
+                    </section>
 
 
+                    <!-- =================================================
+                         INTERAÇÕES
+                         ================================================= -->
 
-==============================================================================
-[ INTERAÇÕES IMPORTANTES ]
-==============================================================================
-Alguns heróis possuem mecânicas específicas que mudam completamente sua utilização.
+                    <section id="interacoes">
 
-
-─────────────────────────────────────────────────────────────
-				LIRE (S)
-─────────────────────────────────────────────────────────────
-Lire Especial é um boneco interessante...
-
-Caso queira usa-la em Scoring Content:
-├── Substituir o segundo DPS por:
-├── Ai (T) ou Outro Guardião
-└── Motivo: 
-	└── Ela perde dano quando existe outro DPS na equipe.
+<pre class="ascii">==============================================================================
+[ 10 :: INTERAÇÕES IMPORTANTES ]
+==============================================================================</pre>
 
 
-─────────────────────────────────────────────────────────────
-				IO  (SR)
-─────────────────────────────────────────────────────────────
-Eu espero que você tenha CNH...
+                        <p>
+Alguns heróis possuem mecânicas específicas que mudam completamente sua
+utilização.
+                        </p>
 
-Io seria o melhor atirador do jogo se não precisasse ser pilotada manualmente
-├── Usa Selos Únicos
-├── Deixa as habilidades desligadas
-└── Motivo: 
-	├── O dano da pestinha é puro auto atk.
-	├── Ela precisa de acessórios diferentões... E ñ dá pra deixar ela jogar sozinha
-	├── Quando estiver sem selo, use S1 e S2 esporadicamente
-	└── Quando estiver com selo Ativado, Use só Skill 1 (Justiça) a cada ≈ 13s
 
-==============================================================================
- DESCENDÊNCIA  (D)
-==============================================================================
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                                LIRE (S)
+────────────────────────────────────────────────────────────────────────────────</pre>
 
-Como foi dito lá em cima nem todo boneco precisa de D10 pra funcionar...
+<pre class="terminal-block">Lire Especial é um boneco interessante...
 
+Caso queira usá-la em Scoring Content:
+
+    ├── Substituir o segundo DPS por:
+    ├── Ai (T) ou outro Guardião
+    └── Motivo:
+
+        └── Ela perde dano quando existe outro DPS na equipe.</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                                IO (SR)
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+<pre class="terminal-block">Eu espero que você tenha CNH...
+
+Io seria o melhor atirador do jogo se não precisasse ser pilotada manualmente.
+
+    ├── Usa Selos Únicos.
+    ├── Deixa as habilidades desligadas.
+    └── Motivo:
+
+        ├── O dano da pestinha é puro auto atk.
+        ├── Ela precisa de acessórios diferentões...
+        │   E não dá pra deixar ela jogar sozinha.
+        ├── Sem selo:
+        │   Use S1 e S2 esporadicamente.
+        └── Com selo ativado:
+            Use somente Skill 1 (Justiça) a cada ≈13s.</pre>
+
+                    </section>
+
+
+                    <!-- =================================================
+                         DESCENDÊNCIA
+                         ================================================= -->
+
+                    <section id="descendencia">
+
+<pre class="ascii">==============================================================================
+[ 11 :: DESCENDÊNCIA ]
+==============================================================================</pre>
+
+
+                        <p>
+Como foi dito lá em cima, nem todo boneco precisa de D10 pra funcionar.
+                        </p>
+
+                        <p class="bright">
 Então até onde seu Herói precisa ir pra ser o monstro que nasceu pra ser?
-
-Edel (SR) →  Tecnicamente, o boneco tá feito no D8, mas praticamente dobra os buffs
-no D10... Isso é tipo, mta coisa
-
-Cindy (SR) →  D5 já é melhor que a Nellia (T). D8 é amasso. D10 é o que ela era no lançamento...
-
-Elesis (SR) →  D5 é o melhor Guerreiro em questão de sustain... D10 desbloqueia os
-melhores buffs.
-
-Mari (SR) →  kkmari (;-;)
-
-Grandiel (T) →  D0 já é um Buffer + 0,5 DPS...D10 vira um DPS + Buffer.
-
-Iyoung (SR) →  quebrada (D5), continua quebrada só que trava motorola (D10)
-
-Deia (T) →  quebrada (D5), continua quebrada só que trava motorola (D10)
-
-Ryan (SR) →  D0 (morre, ressucita, time imorrível). D5 (Buff, tipo, bom). D10 (Buff, tipo, praq)
-
-Lass (SR) →  Ñ funciona sem D10 (kklass)
-
-Lupus (SR) →  kklupus
-
-Bastet (T) →  D3 (melhor q Lupus D10, foudase); D5 (útil pra praticamente tudo); D10 (quebrada)
-
-Amy (SR) →  Bons buffs no D5, D8 melhora os buffs, D10 é obrigatória em time de mago.
-
-Arme, Elesis, Lime  (S) →  de graça até injeção na testa (D5 já são quebrados, e olha só que coincidência kk)
-
-─────────────────────────────────────────────────────────────
-		QUANTO TEMPO PRA FAZER UM BONECO?
-─────────────────────────────────────────────────────────────
+                        </p>
 
 
+<pre class="terminal-block">EDEL (SR)
+    → Tecnicamente, o boneco tá feito no D8.
+    → Praticamente dobra os buffs no D10.
+    → Isso é tipo, mta coisa.
+
+
+CINDY (SR)
+    → D5 já é melhor que a Nellia (T).
+    → D8 é amasso.
+    → D10 é o que ela era no lançamento.
+
+
+ELESIS (SR)
+    → D5 é o melhor Guerreiro em questão de sustain.
+    → D10 desbloqueia os melhores buffs.
+
+
+MARI (SR)
+    → kkmari
+
+
+GRANDIEL (T)
+    → D0 já é um Buffer + 0,5 DPS.
+    → D10 vira um DPS + Buffer.
+
+
+IYOUNG (SR)
+    → quebrada (D5).
+    → continua quebrada só que trava motorola (D10).
+
+
+DEIA (T)
+    → quebrada (D5).
+    → continua quebrada só que trava motorola (D10).
+
+
+RYAN (SR)
+    → D0: morre, ressuscita, time imorrível.
+    → D5: Buff, tipo, bom.
+    → D10: Buff, tipo, praq.
+
+
+LASS (SR)
+    → P R E C I S A do D10...
+    → Mas quando chega lá é um monstro.
+
+
+LUPUS (SR)
+    → kklupus
+
+
+BASTET (T)
+    → D3: melhor q Lupus D10, foudase.
+    → D5: útil pra praticamente tudo.
+    → D10: quebrada.
+
+
+AMY (SR)
+    → Bons buffs no D5.
+    → D8 melhora os buffs.
+    → D10 é a melhor amiga dos Magos.
+
+
+ARME / ELESIS / LIME (S)
+    → de graça até injeção na testa
+    → D5 já são quebrados.
+    → e olha só que coincidência kk</pre>
+
+
+<pre class="subsection">────────────────────────────────────────────────────────────────────────────────
+                         QUANTO TEMPO PRA FAZER UM BONECO?
+────────────────────────────────────────────────────────────────────────────────</pre>
+
+
+                        <p>
 Depende do ritmo do jogador.
+                        </p>
 
-Uns 3 a 6 meses...Se vc jogar esporadicamente...
+                        <p>
+Uns 3 meses... Se vc jogar esporadicamente...
+                        </p>
 
-Porém:
 
-Grande parte dos recursos iniciais vem de:
+<pre class="terminal-block">Grande parte dos recursos iniciais vem de:
 
     • Conquistas.
-
     • Primeiras conclusões.
+    • Milestones.</pre>
 
-    • Milestones.
 
+                        <p>
 Essas recompensas não são infinitas.
+                        </p>
 
-Com o tempo, a conta entra em uma fase de:
+
+<pre class="terminal-block">Com o tempo, a conta entra em uma fase de:
 
     • Escassez de recursos.
+    • Grind progressivamente mais lento.</pre>
 
-    • Grind progressivamente mais lento.
+                    </section>
 
-============================================================
-             FIM DO DETONADO - VERSÃO 1.0
-============================================================
 
-</pre>
+                    <!-- =================================================
+                         FIM
+                         ================================================= -->
+
+<pre class="footer">────────────────────────────────────────────────────────────────────────────────
+
+GCM_DETONADO.EXE
+
+DATABASE STATUS: ONLINE
+
+> End of available documentation.
+
+> There is probably more.
+
+> There is always more.
+
+────────────────────────────────────────────────────────────────────────────────
+
+C:\GCM&gt; _</pre>
+
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</div>
+
 
 </body>
 </html>

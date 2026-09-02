@@ -10,848 +10,7 @@
 
     <title>GCM_DETONADO.EXE</title>
 
-    <style>
-
-        /* =========================================================
-           GCM_DETONADO.EXE
-           TERMINAL 80-COLUMN
-           COMPATIBILITY EDITION
-           ========================================================= */
-
-
-        /* =========================================================
-           RESET
-           ========================================================= */
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-        }
-
-
-        html {
-            scroll-behavior: smooth;
-            background: #050505;
-        }
-
-
-        body {
-
-            margin: 0;
-
-            min-width: 320px;
-            min-height: 100vh;
-
-            background: #050505;
-
-            color: #cfcfcf;
-
-            font-family:
-                "Courier New",
-                "Lucida Console",
-                monospace;
-
-            font-size: 14px;
-
-            line-height: 1.45;
-        }
-
-
-        /* =========================================================
-           JANELA DO TERMINAL
-
-           Usa quase toda a área disponível sem ultrapassar
-           limites razoáveis em monitores grandes.
-           ========================================================= */
-
-        .terminal-window {
-
-            width: min(1400px, calc(100vw - 32px));
-
-            height: min(94vh, 1000px);
-
-            min-height: 500px;
-
-            margin: 3vh auto;
-
-            border: 1px solid #555;
-
-            background: #080808;
-
-            display: flex;
-
-            flex-direction: column;
-
-            overflow: hidden;
-        }
-
-
-        /* =========================================================
-           TITLE BAR
-           ========================================================= */
-
-        .titlebar {
-
-            flex: 0 0 auto;
-
-            min-height: 38px;
-
-            padding: 0 12px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 15px;
-
-            border-bottom: 1px solid #444;
-
-            background: #101010;
-
-            color: #ddd;
-
-            user-select: none;
-        }
-
-
-        .titlebar-left {
-
-            min-width: 0;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-
-            white-space: nowrap;
-
-            font-weight: bold;
-        }
-
-
-        .titlebar-right {
-
-            flex-shrink: 0;
-
-            color: #777;
-        }
-
-
-        /* =========================================================
-           STATUS BAR
-           ========================================================= */
-
-        .statusbar {
-
-            flex: 0 0 auto;
-
-            min-height: 31px;
-
-            padding: 7px 12px;
-
-            border-bottom: 1px solid #333;
-
-            color: #777;
-
-            font-size: 12px;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-        }
-
-
-        .status-ok {
-            color: #aaa;
-        }
-
-
-        /* =========================================================
-           CORPO
-           ========================================================= */
-
-        .terminal-body {
-
-            flex: 1 1 auto;
-
-            min-height: 0;
-
-            display: flex;
-
-            overflow: hidden;
-        }
-
-
-        /* =========================================================
-           MENU
-           ========================================================= */
-
-        .menu {
-
-            width: 230px;
-
-            flex: 0 0 230px;
-
-            min-height: 0;
-
-            padding: 15px 12px;
-
-            border-right: 1px solid #333;
-
-            background: #070707;
-
-            overflow-x: hidden;
-
-            overflow-y: auto;
-
-            scrollbar-width: thin;
-
-            scrollbar-color: #444 #070707;
-        }
-
-
-        .menu-title {
-
-            margin: 0 0 15px;
-
-            color: #ddd;
-
-            white-space: pre;
-
-            overflow: hidden;
-        }
-
-
-        .menu a {
-
-            display: block;
-
-            padding: 3px 4px;
-
-            color: #999;
-
-            text-decoration: none;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-        }
-
-
-        .menu a::before {
-
-            content: "> ";
-
-            color: #555;
-        }
-
-
-        .menu a:hover {
-
-            color: #fff;
-
-            background: #151515;
-        }
-
-
-        .menu a:hover::before {
-            color: #aaa;
-        }
-
-
-        .menu a:focus-visible {
-
-            outline: 1px solid #777;
-
-            outline-offset: -1px;
-
-            color: #fff;
-
-            background: #151515;
-        }
-
-
-        /* =========================================================
-           ÁREA DE CONTEÚDO
-           ========================================================= */
-
-        .terminal {
-
-            flex: 1 1 auto;
-
-            min-width: 0;
-
-            min-height: 0;
-
-            overflow-y: auto;
-
-            overflow-x: hidden;
-
-            padding: 25px 30px 80px;
-
-            scrollbar-width: thin;
-
-            scrollbar-color: #444 #080808;
-        }
-
-
-        /* =========================================================
-           GRADE TERMINAL
-
-           80 colunas continuam sendo a referência visual.
-
-           Em monitores maiores, a grade permanece centralizada.
-
-           Em monitores menores, ela mantém sua largura e o
-           contêiner cria scroll horizontal quando necessário.
-           ========================================================= */
-
-        .terminal-scroll {
-
-            width: 100%;
-
-            min-width: 0;
-
-            overflow-x: auto;
-
-            overflow-y: visible;
-
-            scrollbar-width: thin;
-
-            scrollbar-color: #444 #080808;
-        }
-
-
-        .terminal-grid {
-
-            /*
-             * 80ch é mantido para preservar o desenho ASCII.
-             *
-             * O min-width impede que o conteúdo seja comprimido.
-             *
-             * O width permite que navegadores com fontes diferentes
-             * mantenham aproximadamente a mesma proporção.
-             */
-
-            width: 80ch;
-
-            min-width: 80ch;
-
-            max-width: none;
-
-            margin: 0 auto;
-
-            padding: 0;
-        }
-
-
-        /* =========================================================
-           TEXTO PURO
-           ========================================================= */
-
-        p {
-
-            margin: 0 0 18px;
-
-            max-width: 80ch;
-        }
-
-
-        .bright {
-            color: #fff;
-        }
-
-
-        .dim {
-            color: #777;
-        }
-
-
-        /* =========================================================
-           ASCII ART
-           ========================================================= */
-
-        pre {
-
-            font-family: inherit;
-
-            font-size: inherit;
-
-            line-height: inherit;
-
-            tab-size: 4;
-        }
-
-
-        pre.ascii {
-
-            margin: 0 0 30px;
-
-            width: 80ch;
-
-            white-space: pre;
-
-            overflow-x: visible;
-
-            color: #ddd;
-        }
-
-
-        /* =========================================================
-           BLOCO DE TERMINAL
-           ========================================================= */
-
-        pre.terminal-block {
-
-            width: 80ch;
-
-            margin: 25px 0;
-
-            padding: 12px;
-
-            border: 1px solid #333;
-
-            background: #090909;
-
-            white-space: pre;
-
-            overflow-x: visible;
-
-            font-family: inherit;
-
-            line-height: 1.4;
-
-            color: #cfcfcf;
-        }
-
-
-        pre.terminal-block:hover {
-            border-color: #555;
-        }
-
-
-        /* =========================================================
-           BLOCO DE ALERTA
-           ========================================================= */
-
-        pre.notice {
-
-            width: 80ch;
-
-            margin: 25px 0;
-
-            padding: 12px;
-
-            border-left: 2px solid #777;
-
-            background: #090909;
-
-            white-space: pre;
-
-            overflow-x: visible;
-
-            font-family: inherit;
-
-            color: #aaa;
-        }
-
-
-        /* =========================================================
-           SUBSEÇÃO
-           ========================================================= */
-
-        pre.subsection {
-
-            width: 80ch;
-
-            margin: 35px 0 25px;
-
-            white-space: pre;
-
-            font-family: inherit;
-
-            color: #aaa;
-        }
-
-
-        /* =========================================================
-           SEÇÕES
-           ========================================================= */
-
-        section {
-
-            margin-bottom: 90px;
-
-            scroll-margin-top: 20px;
-        }
-
-
-        section > h2 {
-            display: none;
-        }
-
-
-        /* =========================================================
-           TABELA
-
-           Continua sendo HTML porque representa dados tabulares.
-           ========================================================= */
-
-        .terminal-table {
-
-            width: 80ch;
-
-            min-width: 80ch;
-
-            border-collapse: collapse;
-
-            margin: 25px 0;
-
-            font-family: inherit;
-        }
-
-
-        .terminal-table th,
-        .terminal-table td {
-
-            padding: 7px 9px;
-
-            border: 1px solid #333;
-
-            text-align: left;
-        }
-
-
-        .terminal-table th {
-
-            color: #fff;
-
-            background: #111;
-        }
-
-
-        .terminal-table tr:hover td {
-            background: #111;
-        }
-
-
-        /* =========================================================
-           PROMPT
-           ========================================================= */
-
-        pre.prompt {
-
-            width: 80ch;
-
-            margin-top: 40px;
-
-            color: #777;
-
-            white-space: pre;
-
-            font-family: inherit;
-        }
-
-
-        /* =========================================================
-           FOOTER
-           ========================================================= */
-
-        pre.footer {
-
-            width: 80ch;
-
-            padding-top: 30px;
-
-            border-top: 1px solid #333;
-
-            color: #555;
-
-            white-space: pre;
-
-            font-family: inherit;
-        }
-
-
-        /* =========================================================
-           SCROLLBARS — CHROME / EDGE / SAFARI
-
-           Mantém aparência discreta de terminal.
-           ========================================================= */
-
-        .terminal::-webkit-scrollbar,
-        .terminal-scroll::-webkit-scrollbar,
-        .menu::-webkit-scrollbar {
-
-            width: 8px;
-            height: 8px;
-        }
-
-
-        .terminal::-webkit-scrollbar-track,
-        .terminal-scroll::-webkit-scrollbar-track,
-        .menu::-webkit-scrollbar-track {
-
-            background: #080808;
-        }
-
-
-        .terminal::-webkit-scrollbar-thumb,
-        .terminal-scroll::-webkit-scrollbar-thumb,
-        .menu::-webkit-scrollbar-thumb {
-
-            background: #444;
-
-            border-radius: 0;
-        }
-
-
-        .terminal::-webkit-scrollbar-thumb:hover,
-        .terminal-scroll::-webkit-scrollbar-thumb:hover,
-        .menu::-webkit-scrollbar-thumb:hover {
-
-            background: #555;
-        }
-
-
-        /* =========================================================
-           MONITORES GRANDES
-           ========================================================= */
-
-        @media (min-width: 1500px) {
-
-            .terminal-window {
-
-                width: min(1500px, calc(100vw - 48px));
-            }
-
-
-            .terminal {
-
-                padding-left: 40px;
-
-                padding-right: 40px;
-            }
-
-        }
-
-
-        /* =========================================================
-           NOTEBOOKS / MONITORES PEQUENOS
-           ========================================================= */
-
-        @media (max-width: 1100px) {
-
-            .terminal-window {
-
-                width: calc(100vw - 20px);
-
-                margin-top: 2vh;
-
-                margin-bottom: 2vh;
-            }
-
-
-            .terminal {
-
-                padding-left: 20px;
-
-                padding-right: 20px;
-            }
-
-        }
-
-
-        /* =========================================================
-           ALTURA PEQUENA
-
-           Evita que a janela fique maior que a viewport.
-           ========================================================= */
-
-        @media (max-height: 650px) {
-
-            .terminal-window {
-
-                height: calc(100vh - 20px);
-
-                margin-top: 10px;
-
-                margin-bottom: 10px;
-            }
-
-
-            .terminal {
-
-                padding-top: 18px;
-
-                padding-bottom: 50px;
-            }
-
-
-            .menu {
-
-                padding-top: 10px;
-
-                padding-bottom: 10px;
-            }
-
-        }
-
-
-        /* =========================================================
-           CELULAR / TABLET
-           ========================================================= */
-
-        @media (max-width: 750px) {
-
-            .terminal-window {
-
-                width: 100vw;
-
-                height: 100vh;
-
-                min-height: 0;
-
-                margin: 0;
-
-                border: none;
-            }
-
-
-            .terminal-body {
-
-                flex-direction: column;
-            }
-
-
-            /* -----------------------------------------------------
-               Menu horizontal
-               ----------------------------------------------------- */
-
-            .menu {
-
-                width: 100%;
-
-                flex: 0 0 auto;
-
-                max-height: 155px;
-
-                padding: 10px;
-
-                border-right: none;
-
-                border-bottom: 1px solid #333;
-
-                overflow-x: auto;
-
-                overflow-y: auto;
-            }
-
-
-            .menu-title {
-
-                margin-bottom: 8px;
-            }
-
-
-            .menu a {
-
-                display: inline-block;
-
-                width: auto;
-
-                margin-right: 8px;
-            }
-
-
-            /* -----------------------------------------------------
-               Terminal
-               ----------------------------------------------------- */
-
-            .terminal {
-
-                padding: 20px 0 60px;
-
-                overflow-x: hidden;
-            }
-
-
-            /*
-             * A grade continua com 80ch.
-             *
-             * O scroll horizontal fica no terminal-scroll,
-             * preservando ASCII sem quebrar linhas.
-             */
-
-            .terminal-grid {
-
-                margin-left: 15px;
-
-                margin-right: 15px;
-            }
-
-        }
-
-
-        /* =========================================================
-           TELAS MUITO PEQUENAS
-           ========================================================= */
-
-        @media (max-width: 400px) {
-
-            body {
-                font-size: 13px;
-            }
-
-
-            .terminal-grid {
-
-                margin-left: 10px;
-
-                margin-right: 10px;
-            }
-
-
-            .titlebar {
-
-                padding-left: 8px;
-
-                padding-right: 8px;
-            }
-
-
-            .statusbar {
-
-                padding-left: 8px;
-
-                padding-right: 8px;
-            }
-
-        }
-
-
-        /* =========================================================
-           ACESSIBILIDADE
-
-           Não altera o design normal.
-           Apenas respeita usuários que pedem menos animação.
-           ========================================================= */
-
-        @media (prefers-reduced-motion: reduce) {
-
-            html {
-                scroll-behavior: auto;
-            }
-
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 
 </head>
 
@@ -923,6 +82,14 @@
             <a href="#sisteminhas">[09] URMOMGAE</a>
             <a href="#interacoes">[10] INTERAÇÕES</a>
             <a href="#descendencia">[11] DESCENDÊNCIA</a>
+
+<pre class="dim">
+───────────────────────
+EXTRA
+
+</pre>
+
+            <a href="#" id="open-map">[M] WORLD MAP</a>
 
 <pre class="dim">
 ───────────────────────
@@ -2040,6 +1207,137 @@ C:\GCM&gt; _</pre>
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     MAPA — BOX SOBREPOSTA
+     ========================================================= -->
+
+<div
+    class="map-modal"
+    id="map-modal"
+    aria-hidden="true"
+>
+
+    <div
+        class="map-modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-label="GCM World Map"
+    >
+
+        <div class="map-modal-header">
+
+            <span>GCM WORLD MAP</span>
+
+            <button
+                class="map-close"
+                id="close-map"
+                type="button"
+                aria-label="Fechar mapa"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="map-modal-content">
+
+            <img
+                src="mapa.png"
+                alt="Mapa do Grand Chase"
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MAPA — JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+const mapModal = document.getElementById("map-modal");
+const openMap = document.getElementById("open-map");
+const closeMap = document.getElementById("close-map");
+
+
+function openMapModal() {
+
+    mapModal.classList.add("active");
+
+    mapModal.setAttribute("aria-hidden", "false");
+
+}
+
+
+function closeMapModal() {
+
+    mapModal.classList.remove("active");
+
+    mapModal.setAttribute("aria-hidden", "true");
+
+}
+
+
+/* ---------------------------------------------------------
+   Abrir pelo menu
+   --------------------------------------------------------- */
+
+openMap.addEventListener("click", function (event) {
+
+    event.preventDefault();
+
+    openMapModal();
+
+});
+
+
+/* ---------------------------------------------------------
+   Fechar pelo X
+   --------------------------------------------------------- */
+
+closeMap.addEventListener("click", function () {
+
+    closeMapModal();
+
+});
+
+
+/* ---------------------------------------------------------
+   Fechar clicando fora da caixa
+   --------------------------------------------------------- */
+
+mapModal.addEventListener("click", function (event) {
+
+    if (event.target === mapModal) {
+
+        closeMapModal();
+
+    }
+
+});
+
+
+/* ---------------------------------------------------------
+   Fechar com ESC
+   --------------------------------------------------------- */
+
+document.addEventListener("keydown", function (event) {
+
+    if (event.key === "Escape") {
+
+        closeMapModal();
+
+    }
+
+});
+
+</script>
 
 
 </body>

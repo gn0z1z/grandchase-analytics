@@ -1,6 +1,1290 @@
 /* =========================================================
    GCM_DETONADO.EXE
    TERMINAL 80-COLUMN
+   GREEN PHOSPHOR EDITION — 100% CSS (SEM JAVASCRIPT)
+   ========================================================= */
+
+
+/* =========================================================
+   PALETA
+   =========================================================
+
+   Tudo em tons de verde, derivado de poucos valores base.
+   Pra recalibrar o "verde" inteiro do site, mexe só aqui.
+   ========================================================= */
+
+:root {
+
+    /* fundos, do mais escuro pro mais claro */
+    --bg-void:    #020a03;
+    --bg-window:  #05130a;
+    --bg-panel:   #071a0d;
+    --bg-header:  #0a2010;
+    --bg-hover:   #0f2c15;
+    --bg-th:      #0d2612;
+
+    /* bordas, do mais discreto pro mais forte */
+    --border-dim:    #1e4a26;
+    --border-mid:    #2e6a35;
+    --border:        #3f8f47;
+    --border-strong: #55c460;
+
+    /* texto, do mais apagado pro mais claro */
+    --text-dim:    #4c8a55;
+    --text:        #86c98f;
+    --text-mid:    #a9e3ae;
+    --text-bright: #e3ffe6;
+
+    /* acento neon — usado com moderação */
+    --accent:      #39ff6a;
+
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+    background: var(--bg-void);
+}
+
+
+body {
+    margin: 0;
+
+    min-width: 320px;
+    min-height: 100vh;
+
+    background: var(--bg-void);
+
+    color: var(--text);
+
+    font-family:
+        "Courier New",
+        "Lucida Console",
+        monospace;
+
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   VISUALMENTE OCULTO (mas ainda focável via teclado)
+   =========================================================
+
+   Usado nos <input> que controlam o modal e as abas.
+   Continuam no fluxo/tab-order, só não aparecem na tela.
+   ========================================================= */
+
+.sr-hide {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    padding: 0;
+    margin: -1px;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    white-space: nowrap;
+
+    border: 0;
+}
+
+
+/* =========================================================
+   JANELA DO TERMINAL
+   ========================================================= */
+
+.terminal-window {
+    width: min(1400px, calc(100vw - 32px));
+
+    height: min(94vh, 1000px);
+
+    min-height: 500px;
+
+    margin: 3vh auto;
+
+    border: 1px solid var(--border);
+
+    background: var(--bg-window);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TITLE BAR
+   ========================================================= */
+
+.titlebar {
+    flex: 0 0 auto;
+
+    min-height: 38px;
+
+    padding: 0 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid var(--border-mid);
+
+    background: var(--bg-header);
+
+    color: var(--text-bright);
+
+    text-shadow: 0 0 4px rgba(57, 255, 106, 0.35);
+
+    user-select: none;
+}
+
+
+.titlebar-left {
+    min-width: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    font-weight: bold;
+}
+
+
+.titlebar-right {
+    flex-shrink: 0;
+
+    color: var(--accent);
+}
+
+
+/* =========================================================
+   STATUS BAR
+   ========================================================= */
+
+.statusbar {
+    flex: 0 0 auto;
+
+    min-height: 31px;
+
+    padding: 7px 12px;
+
+    border-bottom: 1px solid var(--border-dim);
+
+    color: var(--text-dim);
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.status-ok {
+    color: var(--accent);
+}
+
+
+/* =========================================================
+   CORPO
+   ========================================================= */
+
+.terminal-body {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    display: flex;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+.menu {
+    width: 230px;
+    flex: 0 0 230px;
+
+    min-height: 0;
+
+    padding: 15px 12px;
+
+    border-right: 1px solid var(--border-dim);
+
+    background: var(--bg-panel);
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) var(--bg-panel);
+}
+
+
+.menu-title {
+    margin: 0 0 15px;
+
+    color: var(--text-bright);
+
+    white-space: pre;
+
+    overflow: hidden;
+}
+
+
+.menu a,
+.menu-toggle-label {
+    display: block;
+
+    padding: 3px 4px;
+
+    color: var(--text-dim);
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    cursor: pointer;
+}
+
+
+.menu a::before,
+.menu-toggle-label::before {
+    content: "➤ ";
+
+    color: var(--border);
+}
+
+
+.menu a:hover,
+.menu-toggle-label:hover {
+    color: var(--accent);
+
+    background: var(--bg-hover);
+}
+
+
+.menu a:hover::before,
+.menu-toggle-label:hover::before {
+    color: var(--accent);
+}
+
+
+.menu a:focus-visible,
+.menu-toggle-label:focus-visible {
+    outline: 1px solid var(--border-strong);
+
+    outline-offset: -1px;
+
+    color: var(--accent);
+
+    background: var(--bg-hover);
+}
+
+
+/* Foco no checkbox oculto reflete no label do menu */
+#build-toggle:focus ~ .terminal-window .menu-toggle-label {
+    outline: 1px solid var(--border-strong);
+
+    outline-offset: -1px;
+
+    color: var(--accent);
+
+    background: var(--bg-hover);
+}
+
+
+/* =========================================================
+   ÁREA DE CONTEÚDO
+   ========================================================= */
+
+.terminal {
+    flex: 1 1 auto;
+
+    min-width: 0;
+    min-height: 0;
+
+    /*
+       IMPORTANTE:
+
+       O overflow horizontal fica aqui.
+       Antes ele estava hidden, o que podia cortar
+       os blocos de 80 colunas.
+    */
+    overflow-x: auto;
+    overflow-y: auto;
+
+    padding: 25px 30px 80px;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) var(--bg-window);
+}
+
+
+/* =========================================================
+   GRADE TERMINAL
+   ========================================================= */
+
+.terminal-scroll {
+    /*
+       Permite que o conteúdo mantenha sua largura real.
+       O terminal pode então rolar horizontalmente quando
+       a tela for menor que 80 colunas.
+    */
+    width: max-content;
+
+    min-width: 100%;
+
+    overflow: visible;
+}
+
+
+/*
+   O conteúdo continua sendo um terminal de 80 colunas.
+
+   NÃO usamos max-width aqui porque isso faria os
+   caracteres ASCII perderem a proporção original.
+*/
+
+.terminal-grid {
+    width: 80ch;
+
+    min-width: 80ch;
+
+    max-width: none;
+
+    margin: 0 auto;
+
+    padding: 0;
+}
+
+
+/* =========================================================
+   TEXTO PURO
+   ========================================================= */
+
+p {
+    margin: 0 0 18px;
+
+    max-width: 80ch;
+}
+
+
+.bright {
+    color: var(--text-bright);
+
+    text-shadow: 0 0 4px rgba(57, 255, 106, 0.35);
+}
+
+
+.dim {
+    color: var(--text-dim);
+}
+
+
+/* =========================================================
+   ASCII ART
+   ========================================================= */
+
+pre {
+    margin-top: 0;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+
+    font-size: inherit;
+
+    line-height: inherit;
+
+    tab-size: 4;
+}
+
+
+pre.ascii {
+    width: 80ch;
+
+    margin: 0 0 30px;
+
+    white-space: pre;
+
+    overflow: visible;
+
+    color: var(--text-bright);
+
+    text-shadow: 0 0 3px rgba(57, 255, 106, 0.25);
+}
+
+
+/* =========================================================
+   BLOCOS DE TERMINAL
+   ========================================================= */
+
+pre.terminal-block {
+    width: 80ch;
+
+    margin: 25px 0;
+
+    padding: 12px;
+
+    border: 1px solid var(--border-dim);
+
+    background: var(--bg-panel);
+
+    white-space: pre;
+
+    overflow: visible;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+
+    line-height: 1.4;
+
+    color: var(--text);
+}
+
+
+pre.terminal-block:hover {
+    border-color: var(--border);
+}
+
+
+/* =========================================================
+   BLOCO DE ALERTA
+   ========================================================= */
+
+pre.notice {
+    width: 80ch;
+
+    margin: 25px 0;
+
+    padding: 12px;
+
+    border-left: 2px solid var(--border);
+
+    background: var(--bg-panel);
+
+    white-space: pre;
+
+    overflow: visible;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+
+    color: var(--text-mid);
+}
+
+
+/* =========================================================
+   SUBSEÇÃO
+   ========================================================= */
+
+pre.subsection {
+    width: 80ch;
+
+    margin: 35px 0 25px;
+
+    white-space: pre;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+
+    color: var(--text-mid);
+}
+
+
+/* =========================================================
+   SEÇÕES
+   ========================================================= */
+
+section {
+    margin-bottom: 90px;
+
+    scroll-margin-top: 20px;
+}
+
+
+section > h2 {
+    display: none;
+}
+
+
+/* =========================================================
+   TABELA
+   ========================================================= */
+
+.terminal-table {
+    width: 80ch;
+
+    min-width: 80ch;
+
+    border-collapse: collapse;
+
+    margin: 25px 0;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+
+.terminal-table th,
+.terminal-table td {
+    padding: 7px 9px;
+
+    border: 1px solid var(--border-dim);
+
+    text-align: left;
+}
+
+
+.terminal-table th {
+    color: var(--text-bright);
+
+    background: var(--bg-th);
+}
+
+
+.terminal-table tr:hover td {
+    background: var(--bg-th);
+}
+
+
+/* =========================================================
+   PROMPT
+   ========================================================= */
+
+pre.prompt {
+    width: 80ch;
+
+    margin-top: 40px;
+
+    color: var(--text-dim);
+
+    white-space: pre;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+pre.footer {
+    width: 80ch;
+
+    padding-top: 30px;
+
+    border-top: 1px solid var(--border-dim);
+
+    color: var(--text-dim);
+
+    white-space: pre;
+
+    font-family: "Courier New", "Lucida Console", monospace;
+}
+
+
+/* Cursor piscante do prompt final — puro CSS */
+
+.cursor {
+    animation: blink 1s step-start infinite;
+
+    color: var(--accent);
+}
+
+
+@keyframes blink {
+
+    50% {
+        opacity: 0;
+    }
+
+}
+
+
+/* =========================================================
+   SCROLLBARS
+   ========================================================= */
+
+.terminal::-webkit-scrollbar,
+.menu::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+
+.terminal::-webkit-scrollbar-track,
+.menu::-webkit-scrollbar-track {
+    background: var(--bg-window);
+}
+
+
+.terminal::-webkit-scrollbar-thumb,
+.menu::-webkit-scrollbar-thumb {
+    background: var(--border);
+
+    border-radius: 0;
+}
+
+
+.terminal::-webkit-scrollbar-thumb:hover,
+.menu::-webkit-scrollbar-thumb:hover {
+    background: var(--border-strong);
+}
+
+
+/* =========================================================
+   BUILDS — MODAL (100% CSS, via checkbox hack)
+   ========================================================= */
+
+.map-modal {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    z-index: 9998;
+
+    background: rgba(2, 10, 3, 0.82);
+
+    cursor: default;
+}
+
+
+.map-modal-box {
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: none;
+
+    flex-direction: column;
+
+    z-index: 9999;
+
+    width: min(1400px, 95vw);
+
+    height: min(900px, 92vh);
+
+    border: 1px solid var(--border-strong);
+
+    background: var(--bg-window);
+
+    box-shadow:
+        0 0 0 1px var(--bg-void),
+        0 0 40px rgba(57, 255, 106, 0.12),
+        0 12px 40px rgba(0, 0, 0, 0.8);
+
+    overflow: hidden;
+}
+
+
+/* Checkbox marcado → mostra as duas camadas */
+
+#build-toggle:checked ~ .map-modal {
+    display: block;
+}
+
+
+#build-toggle:checked ~ .map-modal-box {
+    display: flex;
+}
+
+
+/* =========================================================
+   CABEÇALHO DO MODAL
+   ========================================================= */
+
+.map-modal-header {
+    flex: 0 0 auto;
+
+    min-height: 42px;
+
+    padding: 0 8px 0 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--border-mid);
+
+    background: var(--bg-header);
+
+    color: var(--text-bright);
+
+    font-weight: bold;
+
+    text-shadow: 0 0 4px rgba(57, 255, 106, 0.35);
+
+    user-select: none;
+}
+
+
+/* =========================================================
+   BOTÃO X (label)
+   ========================================================= */
+
+.map-close {
+    width: 42px;
+
+    height: 42px;
+
+    padding: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 0;
+
+    background: transparent;
+
+    color: var(--text-dim);
+
+    font-family: inherit;
+
+    font-size: 30px;
+
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+
+.map-close:hover {
+    color: var(--accent);
+
+    background: var(--bg-hover);
+}
+
+
+#build-toggle:focus ~ .map-modal-box .map-close {
+    outline: 1px solid var(--border-strong);
+
+    outline-offset: -2px;
+}
+
+
+/* =========================================================
+   BUILDS — TABS (radio hack, sem JS)
+   ========================================================= */
+
+.build-tabs {
+    flex: 0 0 auto;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 4px;
+
+    padding: 10px 14px;
+
+    border-bottom: 1px solid var(--border-dim);
+
+    background: var(--bg-panel);
+}
+
+
+.build-tab-label {
+    padding: 6px 10px;
+
+    border: 1px solid var(--border-dim);
+
+    background: var(--bg-panel);
+
+    color: var(--text-dim);
+
+    font-family: "Courier New", "Lucida Console", monospace;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+
+.build-tab-label:hover {
+    color: var(--text-mid);
+
+    border-color: var(--border);
+}
+
+
+/* Aba ativa = rádio correspondente marcado */
+
+#tab-guerreiro:checked ~ .build-tabs label[for="tab-guerreiro"],
+#tab-atirador:checked  ~ .build-tabs label[for="tab-atirador"],
+#tab-mago:checked      ~ .build-tabs label[for="tab-mago"],
+#tab-sup:checked       ~ .build-tabs label[for="tab-sup"],
+#tab-tank:checked      ~ .build-tabs label[for="tab-tank"] {
+    color: var(--accent);
+
+    border-color: var(--border-strong);
+
+    background: var(--bg-hover);
+
+    text-shadow: 0 0 4px rgba(57, 255, 106, 0.4);
+}
+
+
+/* Foco via teclado nos rádios ocultos */
+
+#tab-guerreiro:focus ~ .build-tabs label[for="tab-guerreiro"],
+#tab-atirador:focus  ~ .build-tabs label[for="tab-atirador"],
+#tab-mago:focus      ~ .build-tabs label[for="tab-mago"],
+#tab-sup:focus       ~ .build-tabs label[for="tab-sup"],
+#tab-tank:focus      ~ .build-tabs label[for="tab-tank"] {
+    outline: 1px solid var(--border-strong);
+
+    outline-offset: -2px;
+}
+
+
+/* =========================================================
+   BUILDS — CONTEÚDO
+   ========================================================= */
+
+.build-content {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    display: block;
+
+    padding: 20px;
+
+    overflow: auto;
+}
+
+
+/* =========================================================
+   BUILDS — TABELAS
+   ========================================================= */
+
+.build-table {
+    display: none;
+
+    width: min(900px, 100%);
+
+    min-width: 0;
+
+    margin: 0 auto;
+
+    resize: both;
+
+    overflow: auto;
+}
+
+
+.build-table th,
+.build-table td {
+    text-align: center;
+
+    font-size: 13px;
+}
+
+
+.build-table thead tr:first-child th {
+    color: var(--text-bright);
+}
+
+
+.build-table thead tr:last-child th {
+    color: var(--text-dim);
+
+    font-weight: normal;
+
+    font-size: 11px;
+}
+
+
+/* Painel visível = rádio correspondente marcado */
+
+#tab-guerreiro:checked ~ .build-content #panel-guerreiro,
+#tab-atirador:checked  ~ .build-content #panel-atirador,
+#tab-mago:checked      ~ .build-content #panel-mago,
+#tab-sup:checked       ~ .build-content #panel-sup,
+#tab-tank:checked      ~ .build-content #panel-tank {
+    display: table;
+}
+
+
+/* =========================================================
+   RESERVADO — SLOT DE IMAGEM (FUTURO)
+   ========================================================= 
+
+   Container + imagem redimensionáveis, seguindo o mesmo
+   padrão das tabelas e blocos ASCII (largura em ch, borda
+   igual ao terminal-block). Vazio por padrão — só usar
+   quando quiser anexar uma imagem de referência.
+   ========================================================= */
+
+.build-image-slot {
+    width: 80ch;
+
+    max-width: 100%;
+
+    min-height: 120px;
+
+    margin: 25px auto;
+
+    padding: 12px;
+
+    border: 1px solid var(--border-dim);
+
+    background: var(--bg-panel);
+
+    resize: both;
+
+    overflow: auto;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.build-image-slot img {
+    display: block;
+
+    max-width: 100%;
+
+    height: auto;
+
+    resize: both;
+
+    overflow: auto;
+}
+
+
+/* =========================================================
+   MONITORES GRANDES
+   ========================================================= */
+
+@media (min-width: 1500px) {
+
+    .terminal-window {
+        width: min(1500px, calc(100vw - 48px));
+    }
+
+
+    .terminal {
+        padding-left: 40px;
+
+        padding-right: 40px;
+    }
+
+}
+
+
+/* =========================================================
+   NOTEBOOKS / MONITORES PEQUENOS
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .terminal-window {
+        width: calc(100vw - 20px);
+
+        margin-top: 2vh;
+
+        margin-bottom: 2vh;
+    }
+
+
+    .terminal {
+        padding-left: 20px;
+
+        padding-right: 20px;
+    }
+
+}
+
+
+/* =========================================================
+   ALTURA PEQUENA
+   ========================================================= */
+
+@media (max-height: 650px) {
+
+    .terminal-window {
+        height: calc(100vh - 20px);
+
+        margin-top: 10px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .terminal {
+        padding-top: 18px;
+
+        padding-bottom: 50px;
+    }
+
+
+    .menu {
+        padding-top: 10px;
+
+        padding-bottom: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   CELULAR / TABLET
+   ========================================================= */
+
+@media (max-width: 750px) {
+
+    .terminal-window {
+        width: 100vw;
+
+        height: 100vh;
+
+        min-height: 0;
+
+        margin: 0;
+
+        border: none;
+    }
+
+
+    .terminal-body {
+        flex-direction: column;
+    }
+
+
+    /*
+       Menu superior no celular.
+    */
+
+    .menu {
+        width: 100%;
+
+        flex: 0 0 auto;
+
+        max-height: 155px;
+
+        padding: 10px;
+
+        border-right: none;
+
+        border-bottom: 1px solid var(--border-dim);
+
+        overflow-x: auto;
+
+        overflow-y: auto;
+    }
+
+
+    .menu-title {
+        margin-bottom: 8px;
+    }
+
+
+    .menu a,
+    .menu-toggle-label {
+        display: inline-block;
+
+        width: auto;
+
+        margin-right: 8px;
+    }
+
+
+    /*
+       O conteúdo continua sendo 80ch.
+
+       Em vez de cortar o terminal, permitimos
+       scroll horizontal.
+    */
+
+    .terminal {
+        padding: 20px 10px 60px;
+
+        overflow-x: auto;
+
+        overflow-y: auto;
+    }
+
+
+    .terminal-scroll {
+        width: max-content;
+
+        min-width: 100%;
+    }
+
+
+    .terminal-grid {
+        width: 80ch;
+
+        min-width: 80ch;
+
+        margin: 0;
+    }
+
+
+    /* -----------------------------------------------------
+       BUILDS NO CELULAR
+       ----------------------------------------------------- */
+
+    .map-modal-box {
+        width: 100%;
+
+        height: 94vh;
+    }
+
+
+    .map-modal-header {
+        min-height: 44px;
+    }
+
+
+    .map-close {
+        width: 46px;
+
+        height: 44px;
+
+        font-size: 32px;
+    }
+
+
+    .build-tabs {
+        padding: 8px;
+
+        gap: 3px;
+    }
+
+
+    .build-tab-label {
+        padding: 5px 8px;
+
+        font-size: 12px;
+    }
+
+
+    .build-content {
+        padding: 8px;
+    }
+
+
+    .build-table {
+        width: 100%;
+
+        font-size: 11px;
+    }
+
+
+    .build-table th,
+    .build-table td {
+        padding: 5px 4px;
+
+        font-size: 11px;
+    }
+
+}
+
+
+/* =========================================================
+   TELAS MUITO PEQUENAS
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+    body {
+        font-size: 13px;
+    }
+
+
+    .terminal {
+        padding-left: 8px;
+
+        padding-right: 8px;
+    }
+
+
+    .terminal-grid {
+        margin-left: 0;
+
+        margin-right: 0;
+    }
+
+
+    .titlebar {
+        padding-left: 8px;
+
+        padding-right: 8px;
+    }
+
+
+    .statusbar {
+        padding-left: 8px;
+
+        padding-right: 8px;
+    }
+
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+
+    .cursor {
+        animation: none;
+
+        opacity: 1;
+    }
+
+}
+/* =========================================================
+   GCM_DETONADO.EXE
+   TERMINAL 80-COLUMN
    COMPATIBILITY EDITION — FIXED
    ========================================================= */
 
